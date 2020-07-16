@@ -8,6 +8,8 @@
 #include "dllist.h"
 
 #define INFINITIVE_VALUE 99999
+#define MAX_ID 3000 // Lon qua se bi segmentation fault (mang 2 chieu)| Neu lon hon can dung cap phat dong cho cac mang
+#define MAX_PATH_LENGTH 100
 
 typedef struct
 {
@@ -25,5 +27,5 @@ int isDAG(Graph);
 void dropGraph(Graph);
 double getEdgeValue(Graph, int v1, int v2);
 double shortestPath(Graph, int s, int t, int* path, int* lengh);
-void swap(int*v1,int*v2);
+
 #endif /* graph.h */

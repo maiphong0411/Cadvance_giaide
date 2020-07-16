@@ -20,7 +20,7 @@ char *getVertex(Graph G, int id)
 {
     JRB node = jrb_find_int(G.vertices, id);
     if (!node)
-        return NULL;
+        return "";
     return jval_s(node->val);
 }
 
@@ -82,7 +82,7 @@ int indegree(Graph G, int v, int* output)
     jrb_traverse(iter, G.vertices)
     {
         node = jrb_find_int(G.edges, jval_i(iter->key));
-        if (node) // Nếu đỉnh ko phải là sink vertex
+        if (node)
         {
             tree = (JRB) jval_v(node->val);
             if (jrb_find_int(tree, v)) // Nếu đỉnh có liên kết đến v
@@ -99,7 +99,7 @@ int indegree(Graph G, int v, int* output)
 int isDAG(Graph G)
 {
     JRB iter;
-    int n, output[100], visited[1000];
+    int n, output[MAX_ID], visited[MAX_ID];
     Dllist stack = new_dllist();
     int vertice, start;
 
@@ -153,18 +153,18 @@ void dropGraph(Graph G)
 
 double shortestPath(Graph G, int s, int t, int* path, int* length)
 {
-    int previous[100]; // Lưu các node trước đó, dùng để tìm đường đi (path)
-    double distance[100]; // Khoảng cách ngắn nhất giữa S đến các đỉnh
-    int add[100]; // Kiểm tra node đã visited
+    int previous[MAX_ID]; // Lưu các node trước đó, dùng để tìm đường đi (path)
+    double distance[MAX_ID]; // Khoảng cách ngắn nhất giữa S đến các đỉnh
+    int add[MAX_ID]; // Check queue added (only one)
     Dllist queue = new_dllist();
     Dllist iter;
     Dllist node;
     int u;
 
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < MAX_ID; ++i)
         distance[i] = INFINITIVE_VALUE;
     distance[s] = 0;
-    memset(add, 0, sizeof(int)*100);
+    memset(add, 0, sizeof(int)*MAX_ID);
     dll_append(queue, new_jval_i(s));
     add[s] = 1;
 
@@ -186,10 +186,10 @@ double shortestPath(Graph G, int s, int t, int* path, int* length)
 
         if (u == t)
             break;
-
+        
         // Cập nhật lại khoảng cách của các đỉnh kề u so với s
         // So khoảng cách d[u] và d[v] + c(u, v)
-        int n, v, w, output[100];
+        int n, v, w, output[MAX_PATH_LENGTH];
         n = outdegree(G, u, output);
         for (int i = 0; i < n; ++i)
         {
@@ -210,7 +210,7 @@ double shortestPath(Graph G, int s, int t, int* path, int* length)
     }
 
     // Tìm đường đi (path), số đỉnh đi qua (length) và tổng quãng đường (return) (từ previous)
-    int n, tmp[100];
+    int n, tmp[MAX_PATH_LENGTH];
     if(distance[t] != INFINITIVE_VALUE)
     {
         // Path
@@ -232,11 +232,4 @@ double shortestPath(Graph G, int s, int t, int* path, int* length)
 
     free_dllist(queue);
     return distance[t];
-}
-
-void swap(int *v1,int *v2)
-{
-    int tmp = *v1;
-    *v1 = *v2;
-    *v2 = tmp;
 }
